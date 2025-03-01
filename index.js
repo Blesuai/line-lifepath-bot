@@ -33,8 +33,8 @@ async function handleEvent(event) {
 
     const userMessage = event.message.text;
 
-    // 如果使用者輸入 "開始"，顯示圖片按鈕選單
-    if (userMessage === "開始") {
+    // 如果使用者輸入 "開始" 或 "輸入生日"，顯示圖片 + 選擇生日按鈕
+    if (userMessage === "開始" || userMessage === "輸入生日") {
         await client.replyMessage({
             replyToken: event.replyToken,
             messages: [{
@@ -44,7 +44,7 @@ async function handleEvent(event) {
                     type: "bubble",
                     hero: {
                         type: "image",
-                        url: "https://i.imgur.com/Iw1xuvp.jpeg",  // 請換成你的圖片 URL
+                        url: "https://i.imgur.com/Iw1xuvp.jpg", // ⚠️ 你的圖片網址（請換成正確的）
                         size: "full",
                         aspectRatio: "20:13",
                         aspectMode: "cover"
@@ -53,20 +53,18 @@ async function handleEvent(event) {
                         type: "box",
                         layout: "vertical",
                         contents: [
-                            { type: "text", text: "請選擇你的生日：", weight: "bold", size: "lg" },
+                            { type: "text", text: "請點擊按鈕選擇你的生日 👇", weight: "bold", size: "lg" },
                             {
                                 type: "button",
-                                action: { type: "message", label: "2000-01-01", text: "2000-01-01" },
-                                style: "primary"
-                            },
-                            {
-                                type: "button",
-                                action: { type: "message", label: "1995-05-20", text: "1995-05-20" },
-                                style: "primary"
-                            },
-                            {
-                                type: "button",
-                                action: { type: "message", label: "1990-12-12", text: "1990-12-12" },
+                                action: {
+                                    type: "datetimepicker",
+                                    label: "選擇生日",
+                                    data: "action=birthdate",
+                                    mode: "date",
+                                    initial: "2000-01-01",  // 預設日期
+                                    max: "2025-12-31",  // 可選擇的最大日期
+                                    min: "1900-01-01"   // 可選擇的最小日期
+                                },
                                 style: "primary"
                             }
                         ]
@@ -77,7 +75,19 @@ async function handleEvent(event) {
         return;
     }
 
-    // 處理生日輸入
+    // 如果收到生日選擇的回應
+    if (event.type === "postback" && event.postback.data === "action=birthdate") {
+        const selectedDate = event.postback.params.date;
+        const lifePathNumber = calculateLifePath(selectedDate);
+
+        await client.replyMessage({
+            replyToken: event.replyToken,
+            messages: [{ type: "text", text: `你的生命靈數是：${lifePathNumber}` }]
+        });
+        return;
+    }
+
+    // 處理手動輸入生日
     const lifePathNumber = calculateLifePath(userMessage);
     if (lifePathNumber) {
         await client.replyMessage({
@@ -87,7 +97,7 @@ async function handleEvent(event) {
     } else {
         await client.replyMessage({
             replyToken: event.replyToken,
-            messages: [{ type: "text", text: "請輸入你的生日（格式：YYYY-MM-DD），或點擊下方按鈕選擇。" }]
+            messages: [{ type: "text", text: "請點擊按鈕選擇生日，或手動輸入（格式：YYYY-MM-DD）" }]
         });
     }
 }
