@@ -33,19 +33,44 @@ async function handleEvent(event) {
 
     const userMessage = event.message.text;
 
-    // 如果使用者輸入 "開始" 或 "輸入生日"，引導他選擇日期
-    if (userMessage === "開始" || userMessage === "輸入生日") {
+    // 如果使用者輸入 "開始"，顯示圖片按鈕選單
+    if (userMessage === "開始") {
         await client.replyMessage({
             replyToken: event.replyToken,
             messages: [{
-                type: "text",
-                text: "請選擇你的生日或手動輸入（格式 YYYY-MM-DD）：",
-                quickReply: {
-                    items: [
-                        { type: "action", action: { type: "message", label: "2000-01-01", text: "2000-01-01" } },
-                        { type: "action", action: { type: "message", label: "1995-05-20", text: "1995-05-20" } },
-                        { type: "action", action: { type: "message", label: "1990-12-12", text: "1990-12-12" } }
-                    ]
+                type: "flex",
+                altText: "請選擇你的生日",
+                contents: {
+                    type: "bubble",
+                    hero: {
+                        type: "image",
+                        url: "https://example.com/birthday.jpg",  // 請換成你的圖片 URL
+                        size: "full",
+                        aspectRatio: "20:13",
+                        aspectMode: "cover"
+                    },
+                    body: {
+                        type: "box",
+                        layout: "vertical",
+                        contents: [
+                            { type: "text", text: "請選擇你的生日：", weight: "bold", size: "lg" },
+                            {
+                                type: "button",
+                                action: { type: "message", label: "2000-01-01", text: "2000-01-01" },
+                                style: "primary"
+                            },
+                            {
+                                type: "button",
+                                action: { type: "message", label: "1995-05-20", text: "1995-05-20" },
+                                style: "primary"
+                            },
+                            {
+                                type: "button",
+                                action: { type: "message", label: "1990-12-12", text: "1990-12-12" },
+                                style: "primary"
+                            }
+                        ]
+                    }
                 }
             }]
         });
@@ -66,6 +91,7 @@ async function handleEvent(event) {
         });
     }
 }
+
 
 
 // 生命靈數計算函式
