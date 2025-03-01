@@ -32,8 +32,28 @@ async function handleEvent(event) {
     }
 
     const userMessage = event.message.text;
-    const lifePathNumber = calculateLifePath(userMessage);
 
+    // 如果使用者輸入 "開始" 或 "輸入生日"，引導他選擇日期
+    if (userMessage === "開始" || userMessage === "輸入生日") {
+        await client.replyMessage({
+            replyToken: event.replyToken,
+            messages: [{
+                type: "text",
+                text: "請選擇你的生日或手動輸入（格式 YYYY-MM-DD）：",
+                quickReply: {
+                    items: [
+                        { type: "action", action: { type: "message", label: "2000-01-01", text: "2000-01-01" } },
+                        { type: "action", action: { type: "message", label: "1995-05-20", text: "1995-05-20" } },
+                        { type: "action", action: { type: "message", label: "1990-12-12", text: "1990-12-12" } }
+                    ]
+                }
+            }]
+        });
+        return;
+    }
+
+    // 處理生日輸入
+    const lifePathNumber = calculateLifePath(userMessage);
     if (lifePathNumber) {
         await client.replyMessage({
             replyToken: event.replyToken,
@@ -42,10 +62,11 @@ async function handleEvent(event) {
     } else {
         await client.replyMessage({
             replyToken: event.replyToken,
-            messages: [{ type: "text", text: "請輸入你的生日（格式：YYYY-MM-DD）" }]
+            messages: [{ type: "text", text: "請輸入你的生日（格式：YYYY-MM-DD），或點擊下方按鈕選擇。" }]
         });
     }
 }
+
 
 // 生命靈數計算函式
 function calculateLifePath(birthdate) {
