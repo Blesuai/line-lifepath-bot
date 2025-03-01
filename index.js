@@ -44,7 +44,7 @@ async function handleEvent(event) {
                     type: "bubble",
                     hero: {
                         type: "image",
-                        url: "https://imgur.com/a/UST692l",  // 請換成你的圖片 URL
+                        url: "https://imgur.com/Iw1xuvp",  // 請換成你的圖片 URL
                         size: "full",
                         aspectRatio: "20:13",
                         aspectMode: "cover"
